@@ -1,3 +1,113 @@
+# Elephant Seal Counter
+
+An automated computer vision pipeline for detecting, counting, and classifying northern elephant seals by age and sex from drone-generated aerial imagery, built in collaboration with Dr. Liwanag’s Vertebrate Integrative Physiology (VIP) Lab at Cal Poly SLO.
+
+## Overview 
+Manually counting elephant seals from aerial beach surveys is time-consuming and error-prone. This project automates that process using a multi-stage deep learning pipeline that detects individual and clumped seals, classifies them by sex and age (Adult Male, Adult Female, Pup, Weaner), and aggregates results into population estimates — all accessible through a web UI and CLI tool.
+
+## My Contributions
+
+- **Data annotation & preprocessing** — Processed raw `.tif` aerial imagery into 
+  JPEG format for Roboflow ingestion, manually annotated individual seal bounding 
+  boxes in Roboflow, and iteratively relabeled training data as the modeling 
+  approach evolved (from object detection to single-label classification)
+
+- **Individual seal classification model** — Led development of the ResNet-18 
+  classification model for individual seals, including diagnosing and resolving 
+  severe class imbalance (adult males represented only 6% of training data) through 
+  targeted geometric and photometric augmentation, improving F1-score for adult 
+  males from 0 to 0.77
+
+- **Baseline for clump model** — The individual classification pipeline served as 
+  the foundation for the clump model architecture; individual seal bounding box 
+  extraction scripts and the detection-then-classification paradigm established 
+  here were directly extended to handle clumped seal groups
+
+- **Clump classification model (collaborative)** — Contributed to the ResNet-18 
+  clump classification model, which outputs Softmax confidence proportions across 
+  four demographic categories (Adult Male, Adult Female, Pup, Weaner) and 
+  multiplies them against object detection counts to estimate per-class 
+  population totals
+
+
+## Pipeline 
+1. **Object Detection** — Roboflow-based YOLO model detects individual seals (blue boxes) and seal clumps (yellow boxes) in mosaic beach images 
+2. **Individual Seal Classification** — ResNet-18 model classifies each detected individual seal as Adult Male, Adult Female, or Young Seal 
+3. **Clump Classification** — Separate ResNet-18 model with Softmax output estimates demographic proportions within clumped seal groups 
+4. **Spatial Graphing** — Distance-based nearest-neighbor system classifies Young Seals as Pups or Weaners using edge-to-edge Pythagorean distance to the nearest Adult Female bounding box (threshold: 185px) 
+5. **Aggregation** — Confidence proportions across all detections are multiplied by predicted seal counts to produce final population estimates per class
+
+## Key Challenges & Solutions 
+- **Pup vs. Weaner distinction** — Visual features alone are insufficient since the key differentiator is proximity to an adult female. Solved by deferring this classification to a post-hoc spatial graphing system rather than the image classifier 
+- **Class imbalance** — Adult males represented only ~6% of training data. Addressed through targeted geometric and photometric augmentation (13 augmentations per male image), growing the training set to 2,172 images 
+- **Centroid distance overestimation** — Initial centroid-to-centroid distance measurements inflated weaner counts. Resolved by switching to edge-to-edge Pythagorean distance 
+
+## Model Performance | 
+Class 
+| 
+Precision 
+| Recall 
+| F1-Score 
+|
+|
+---
+|
+---
+|
+---
+|
+---
+| 
+|
+ Adult Male 
+|
+
+ 0.85 
+|
+ 0.70 
+|
+ 0.77 
+|
+|
+ Adult Female 
+|
+ 0.85 
+|
+ 0.91 
+|
+ 0.88 
+| 
+|
+ Young Seal 
+|
+ 0.93 
+|
+ 0.95 
+|
+ 0.94 
+|
+
+ **Full pipeline accuracy:** 64.1% overall | 79.3% excluding adult males
+
+## Tech Stack
+- Python, PyTorch 
+- ResNet-18 (classification), YOLOv_ (object detection) 
+- Roboflow (annotation & training) 
+- Docker (containerization & deployment) 
+- Web UI (beach image upload, bounding box visualization, hover tooltips, history table) - CLI tool (batch processing of image directories -> CSV output)
+
+## Deployment
+The full pipeline is containerized with Docker and deployable to a remote server, accessible via web browser over Cal Poly's GlobalProtect VPN. Local installation is also supported by building the Dockerfile directly.
+
+## Team
+- Daniel Alvarez (https://github.com/daniel15alv)
+- Connor Gamba (https://github.com/cgamba533)
+- Tara Rajagopalan (https://github.com/tararajagopalan)
+
+---
+
+
+
 # Seal Counter CLI - User Guide
 
 Welcome to the **Seal Counter CLI**! This guide will walk you through the installation and usage of the command-line interface for counting seals in images.
