@@ -42,55 +42,15 @@ Manually counting elephant seals from aerial beach surveys is time-consuming and
 - **Class imbalance** — Adult males represented only ~6% of training data. Addressed through targeted geometric and photometric augmentation (13 augmentations per male image), growing the training set to 2,172 images 
 - **Centroid distance overestimation** — Initial centroid-to-centroid distance measurements inflated weaner counts. Resolved by switching to edge-to-edge Pythagorean distance 
 
-## Model Performance 
+## Model Performance
 
-|
-Class 
-| 
-Precision 
-|
-Recall 
-| 
-F1-Score 
-|
-|
----
-|
----
-|
----
-|
----
-| 
-|
- Adult Male 
-|
- 0.85 
-|
- 0.70 
-|
- 0.77 
-|
-|
- Adult Female 
-|
- 0.85 
-|
- 0.91 
-|
- 0.88 
-| 
-|
- Young Seal 
-|
- 0.93 
-|
- 0.95 
-|
- 0.94 
-|
+| Class | Precision | Recall | F1-Score |
+|---|---|---|---|
+| Adult Male | 0.85 | 0.70 | 0.77 |
+| Adult Female | 0.85 | 0.91 | 0.88 |
+| Young Seal | 0.93 | 0.95 | 0.94 |
 
- **Full pipeline accuracy:** 64.1% overall | 79.3% excluding adult males
+**Full pipeline accuracy:** 64.1% overall | 79.3% excluding adult males
 
 ## Tech Stack
 - Python, PyTorch 
